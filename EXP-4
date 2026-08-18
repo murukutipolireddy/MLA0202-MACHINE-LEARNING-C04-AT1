@@ -1,0 +1,72 @@
+import sklearn_crfsuite
+
+def get_features(sentence, i):
+    word = sentence[i]
+
+    features = {
+        'word': word,
+        'lowercase': word.lower(),
+        'is_digit': word.isdigit(),
+        'is_title': word.istitle()
+    }
+
+    if i > 0:
+        features['previous_word'] = sentence[i - 1]
+
+    if i < len(sentence) - 1:
+        features['next_word'] = sentence[i + 1]
+
+    return features
+
+train_sentences = [
+    ['Ravi', 'ordered', 'Laptop', 'Order123'],
+    ['John', 'bought', 'Mobile', 'Order456'],
+    ['Priya', 'purchased', 'Tablet', 'Order789']
+]
+
+train_labels = [
+    ['CUSTOMER', 'O', 'PRODUCT', 'ORDER'],
+    ['CUSTOMER', 'O', 'PRODUCT', 'ORDER'],
+    ['CUSTOMER', 'O', 'PRODUCT', 'ORDER']
+]
+
+# Create training features
+X_train = []
+
+for sentence in train_sentences:
+    features = []
+
+    for i in range(len(sentence)):
+        features.append(get_features(sentence, i))
+
+    X_train.append(features)
+
+crf = sklearn_crfsuite.CRF(
+    algorithm='lbfgs',
+    max_iterations=100
+)
+
+crf.fit(X_train, train_labels)
+
+test_sentence = [
+    'Arun',
+    'ordered',
+    'Laptop',
+    'Order999'
+]
+X_test = [[]]
+
+for i in range(len(test_sentence)):
+    X_test[0].append(
+        get_features(test_sentence, i)
+    )
+
+prediction = crf.predict(X_test)
+
+print("Sentence:")
+print(" ".join(test_sentence))
+
+print("\nPredicted Entities:")
+
+for word, label in zip(test_sentence, prediction[0]):
+    print(word, "->", label)
