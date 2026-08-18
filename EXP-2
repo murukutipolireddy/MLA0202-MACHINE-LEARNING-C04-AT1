@@ -1,0 +1,41 @@
+from hmmlearn import hmm
+import numpy as np
+
+model = hmm.CategoricalHMM(n_components=3, n_iter=100)
+
+model.startprob_ = np.array([0.5, 0.3, 0.2])
+
+# Transition probabilities
+model.transmat_ = np.array([
+    [0.6, 0.3, 0.1],
+    [0.2, 0.5, 0.3],
+    [0.1, 0.3, 0.6]
+])
+
+model.emissionprob_ = np.array([
+    [0.8, 0.15, 0.05],   # Sunny
+    [0.3, 0.5, 0.2],     # Cloudy
+    [0.05, 0.25, 0.7]    # Rainy
+])
+
+# Observed weather-related activities
+observations = np.array([
+    [0],   # Dry
+    [1],   # Umbrella
+    [2],   # Raincoat
+    [2],   # Raincoat
+    [1]    # Umbrella
+])
+
+# Predict hidden states
+states = model.predict(observations)
+
+weather = ['Sunny', 'Cloudy', 'Rainy']
+
+print("Observed sequence:")
+print(["Dry", "Umbrella", "Raincoat", "Raincoat", "Umbrella"])
+
+print("\nPredicted hidden weather states:")
+
+for state in states:
+    print(weather[state])
