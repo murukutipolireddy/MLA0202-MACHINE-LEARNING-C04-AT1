@@ -1,0 +1,22 @@
+import pandas as pd
+from pgmpy.estimators import HillClimbSearch
+
+# Dataset
+data = pd.DataFrame({
+    'Age': ['Young', 'Old', 'Young', 'Middle', 'Old', 'Young'],
+    'Income': ['Low', 'High', 'High', 'Low', 'High', 'Low'],
+    'Vehicle': ['Bike', 'Car', 'Car', 'Bike', 'Car', 'Bike'],
+    'Claim': ['No', 'Yes', 'Yes', 'No', 'Yes', 'No']
+})
+
+# Learn network structure
+model = HillClimbSearch(data).estimate()
+
+print("Learned Network:")
+print(model.edges())
+
+# Display data
+print("\nDataset:")
+print(data)
+
+print("\nNetwork Learning Completed")
